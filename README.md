@@ -40,8 +40,8 @@ npm run build
 ### Lint with [ESLint](https://eslint.org/)
 
 
-### Send nudes
-
 ```sh
 npm run lint
 ```
+
+### Send nudes
