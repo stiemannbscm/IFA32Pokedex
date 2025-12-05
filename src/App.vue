@@ -1,11 +1,20 @@
-<script setup></script>
-
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <div class="wrapper">
+    <h1>Pokedex</h1>
+    <router-view></router-view>
+  </div>
 </template>
 
-<style scoped></style>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f3f3;
+}
+
+.wrapper {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+</style>
