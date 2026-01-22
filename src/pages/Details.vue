@@ -7,87 +7,83 @@ export default {
       species: null,
       evolution: [],
       loading: true,
-    };
+    }
   },
 
   async created() {
-    await this.fetchData(this.$route.params.name);
+    await this.fetchData(this.$route.params.name)
   },
 
   watch: {
-    "$route.params.name"(newName) {
-      this.fetchData(newName);
+    '$route.params.name'(newName) {
+      this.fetchData(newName)
     },
   },
 
   methods: {
     async fetchData(name) {
-      this.loading = true;
+      this.loading = true
 
       // Base Pokémon
-      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-      this.pokemon = await res.json();
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+      this.pokemon = await res.json()
 
       // Species
-      const speciesRes = await fetch(this.pokemon.species.url);
-      this.species = await speciesRes.json();
+      const speciesRes = await fetch(this.pokemon.species.url)
+      this.species = await speciesRes.json()
 
       // Evolution chain
-      this.evolution = await this.loadEvolutionChain(
-        this.species.evolution_chain.url
-      );
+      this.evolution = await this.loadEvolutionChain(this.species.evolution_chain.url)
 
-      this.loading = false;
+      this.loading = false
     },
 
     back() {
-      if (history.length > 1) this.$router.back();
-      else this.$router.push("/");
+      if (history.length > 1) this.$router.back()
+      else this.$router.push('/')
     },
 
     typeColor(type) {
       const colors = {
-        fire: "#f08030",
-        water: "#6890f0",
-        grass: "#78c850",
-        electric: "#f8d030",
-        ice: "#98d8d8",
-        fighting: "#c03028",
-        poison: "#a040a0",
-        ground: "#e0c068",
-        flying: "#a890f0",
-        psychic: "#f85888",
-        bug: "#a8b820",
-        rock: "#b8a038",
-        ghost: "#705898",
-        dark: "#705848",
-        dragon: "#7038f8",
-        steel: "#b8b8d0",
-        fairy: "#ee99ac",
-      };
-      return colors[type] || "#aaa";
+        fire: '#f08030',
+        water: '#6890f0',
+        grass: '#78c850',
+        electric: '#f8d030',
+        ice: '#98d8d8',
+        fighting: '#c03028',
+        poison: '#a040a0',
+        ground: '#e0c068',
+        flying: '#a890f0',
+        psychic: '#f85888',
+        bug: '#a8b820',
+        rock: '#b8a038',
+        ghost: '#705898',
+        dark: '#705848',
+        dragon: '#7038f8',
+        steel: '#b8b8d0',
+        fairy: '#ee99ac',
+      }
+      return colors[type] || '#aaa'
     },
 
     statPercent(stat) {
-      return (stat / 200) * 100;
+      return (stat / 200) * 100
     },
 
     flavorText() {
-      const entry = this.species.flavor_text_entries.find(
-        (f) => f.language.name === "en"
-      );
-      return entry ? entry.flavor_text.replace(/\n|\f/g, " ") : "";
+      const entry = this.species.flavor_text_entries.find((f) => f.language.name === 'en')
+      return entry ? entry.flavor_text.replace(/\n|\f/g, ' ') : ''
     },
 
     async loadEvolutionChain(url) {
-      const res = await fetch(url);
-      const chainData = await res.json();
+      const res = await fetch(url)
+      const chainData = await res.json()
 
-      const flat = [];
+      const flat = []
 
       const extract = (node) => {
-        const id = node.species.url.split("/")[6];
-        const evo = node.evolution_details?.[0];
+        const id = node.species.url.split('/')[6]
+        const evo = node.evolution_details?.[0]
 
         flat.push({
           id,
@@ -95,16 +91,16 @@ export default {
           image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
           min_level: evo?.min_level || null,
           trigger: evo?.trigger?.name || null,
-        });
+        })
 
-        for (const next of node.evolves_to) extract(next);
-      };
+        for (const next of node.evolves_to) extract(next)
+      }
 
-      extract(chainData.chain);
-      return flat;
+      extract(chainData.chain)
+      return flat
     },
   },
-};
+}
 </script>
 
 <template>
@@ -116,10 +112,7 @@ export default {
     <div v-else class="details">
       <h2>{{ pokemon.name }}</h2>
 
-      <img
-        :src="pokemon.sprites.other['official-artwork'].front_default"
-        alt="pokemon"
-      />
+      <img :src="pokemon.sprites.other['official-artwork'].front_default" alt="pokemon" />
 
       <!-- TYPES -->
       <div class="types">
@@ -149,9 +142,7 @@ export default {
 
           <p class="evo-name">{{ evo.name }}</p>
 
-          <p class="evo-condition" v-if="evo.min_level">
-            Lv. {{ evo.min_level }}
-          </p>
+          <p class="evo-condition" v-if="evo.min_level">Lv. {{ evo.min_level }}</p>
 
           <p class="evo-condition" v-else-if="evo.trigger && evo.trigger !== 'level-up'">
             {{ evo.trigger }}
@@ -168,7 +159,7 @@ export default {
           <img src="https://img.icons8.com/ios-filled/50/rabbit.png" />
           <div>
             <strong>Category</strong>
-            <p>{{ species.genera.find(g => g.language.name==='en').genus }}</p>
+            <p>{{ species.genera.find((g) => g.language.name === 'en').genus }}</p>
           </div>
         </div>
 
@@ -225,8 +216,8 @@ export default {
           <div>
             <strong>Gender Ratio</strong>
             <p v-if="species.gender_rate >= 0">
-              ♂ {{ (100 - species.gender_rate * 12.5).toFixed(1) }}% •
-              ♀ {{ (species.gender_rate * 12.5).toFixed(1) }}%
+              ♂ {{ (100 - species.gender_rate * 12.5).toFixed(1) }}% • ♀
+              {{ (species.gender_rate * 12.5).toFixed(1) }}%
             </p>
             <p v-else>Genderless</p>
           </div>
@@ -236,7 +227,7 @@ export default {
           <img src="https://img.icons8.com/ios-filled/50/eggs.png" />
           <div>
             <strong>Egg Groups</strong>
-            <p>{{ species.egg_groups.map(g => g.name).join(", ") }}</p>
+            <p>{{ species.egg_groups.map((g) => g.name).join(', ') }}</p>
           </div>
         </div>
 
@@ -304,7 +295,7 @@ export default {
   background: white;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
 
@@ -355,7 +346,7 @@ export default {
   border-radius: 10px;
   align-items: center;
   text-align: left;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .info-item img {
@@ -414,7 +405,7 @@ export default {
   border-radius: 10px;
   cursor: pointer;
   transition: 0.2s;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .evo-card:hover {

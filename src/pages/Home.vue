@@ -8,93 +8,87 @@ export default {
       loading: true,
       page: 1,
       limit: 25,
-      search: "",
+      search: '',
       totalPokemon: 1025,
-    };
+    }
   },
 
   computed: {
     maxPage() {
-      return Math.ceil(this.filtered.length / this.limit);
+      return Math.ceil(this.filtered.length / this.limit)
     },
 
     visiblePokemon() {
-      const start = (this.page - 1) * this.limit;
-      return this.filtered.slice(start, start + this.limit);
+      const start = (this.page - 1) * this.limit
+      return this.filtered.slice(start, start + this.limit)
     },
   },
 
   watch: {
     search() {
-      this.applyFilter();
+      this.applyFilter()
     },
 
-    "$route.query.page"(value) {
-      const p = Number(value);
+    '$route.query.page'(value) {
+      const p = Number(value)
       if (!isNaN(p)) {
-        this.page = p;
+        this.page = p
       }
     },
   },
 
   async created() {
-    const urlPage = Number(this.$route.query.page);
-    if (urlPage > 0) this.page = urlPage;
+    const urlPage = Number(this.$route.query.page)
+    if (urlPage > 0) this.page = urlPage
 
-    await this.loadAllPokemon();
-    this.applyFilter();
+    await this.loadAllPokemon()
+    this.applyFilter()
   },
 
   methods: {
     async loadAllPokemon() {
-      const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025");
-      const data = await res.json();
+      const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025')
+      const data = await res.json()
 
       this.allPokemon = data.results.map((p) => ({
         name: p.name,
-        id: p.url.split("/")[6],
-        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.url.split("/")[6]}.png`,
-      }));
+        id: p.url.split('/')[6],
+        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.url.split('/')[6]}.png`,
+      }))
 
-      this.loading = false;
+      this.loading = false
     },
 
     applyFilter() {
-      const s = this.search.toLowerCase();
+      const s = this.search.toLowerCase()
 
-      this.filtered = this.allPokemon.filter((p) =>
-        p.name.toLowerCase().includes(s)
-      );
+      this.filtered = this.allPokemon.filter((p) => p.name.toLowerCase().includes(s))
 
-      if (this.page > this.maxPage) this.page = 1;
+      if (this.page > this.maxPage) this.page = 1
 
-      this.$router.replace({ query: { page: this.page } });
+      this.$router.replace({ query: { page: this.page } })
     },
 
     nextPage() {
       if (this.page < this.maxPage) {
-        this.page++;
-        this.$router.replace({ query: { page: this.page } });
+        this.page++
+        this.$router.replace({ query: { page: this.page } })
       }
     },
 
     prevPage() {
       if (this.page > 1) {
-        this.page--;
-        this.$router.replace({ query: { page: this.page } });
+        this.page--
+        this.$router.replace({ query: { page: this.page } })
       }
     },
   },
-};
+}
 </script>
 
 <template>
   <div>
-    <input
-      v-model="search"
-      class="search"
-      placeholder="Search Pokémon..."
-    />
+    <input v-model="search" class="search" placeholder="Search Pokémon..." />
 
     <p v-if="loading">Loading Pokémon...</p>
 
@@ -139,13 +133,13 @@ export default {
   padding: 15px;
   cursor: pointer;
   text-align: center;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
   transition: 0.2s;
 }
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
 }
 
 .card img {
